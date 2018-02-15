@@ -93,6 +93,14 @@ class Player
 		else return false;
 	}
 
+	void action(int card){
+		switch(card){
+			case 1 : {
+				std::cout << "Select target player: ";
+			}
+		}
+	}
+
 	public:
 	
 	Player(int playerNumber){
@@ -101,7 +109,7 @@ class Player
 		pointer++;
 	}
 
-	void action(){
+	void turn(){
 		isProtected = false;
 		draw();
 		printHand(hand.front());
