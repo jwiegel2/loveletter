@@ -4,12 +4,18 @@
 #include <random>
 #include <chrono>
 #include <list>
+#include <vector>
 #include <string>
 #include <stdio.h>
 
 // Start pointer at 1 since you remove 1 card at the beginning of play
 int pointer = 1;
+int numPlayers = 0;
 std::array<int,16> deck {1,1,1,1,1,2,2,3,3,4,4,5,5,6,7,8};
+
+class Player;
+
+std::vector<Player> players;
 
 class Player
 {
@@ -19,6 +25,8 @@ class Player
 	int playerNumber;
 	// Is player protected by handmaid?
 	bool isProtected = false;
+	// Has player lost yet?
+	bool isLoser = false;
 
 	private:
 
@@ -30,13 +38,21 @@ class Player
 	void printHand(int card){
 		switch(card) {
 			case 1 : std::cout << "  [Guard]  ";
+				break;
 			case 2 : std::cout << "  [Priest]  ";
+				break;
 			case 3 : std::cout << "  [Baron]  ";
+				break;
 			case 4 : std::cout << "  [Handmaid]  ";
+				break;
 			case 5 : std::cout << "  [Prince]  ";
+				break;
 			case 6 : std::cout << "  [King]  ";
+				break;
 			case 7 : std::cout << "  [Countess]  ";
+				break;
 			case 8 : std::cout << "  [Princess]  ";
+				break;
 		}
 	}
 	
@@ -45,42 +61,42 @@ class Player
 		// on which card was selected
 		bool validCard = false;
 		while(!validCard){
+			std::cout << "Which card will you play? ";
 			std::string input;
 			std::cin >> input;
 			std::transform(input.begin(), input.end(), input.begin(), ::tolower);
 			if(input.compare("guard") == 0){
 				validCard = checkValid(1);
-				std::cout << "Select target player: ";
+				if(validCard) action(1);
 			}
 			else if(input.compare("priest") == 0){
 				validCard = checkValid(2);
-				std::cout << "Select target player: ";
+				if(validCard) action(2);
 			}
 			else if(input.compare("baron") == 0){
 				validCard = checkValid(3);
-				std::cout << "Select target player: ";
+				if(validCard) action(3);
 			}
 			else if(input.compare("handmaid") == 0){
 				validCard = checkValid(4);
-				std::cout << "Select target player: ";
+				if(validCard) action(4);
 			}
 			else if(input.compare("prince") == 0){
 				validCard = checkValid(5);
-				std::cout << "Select target player: ";
+				if(validCard) action(5);
 			}
 			else if(input.compare("king") == 0){
 				validCard = checkValid(6);
-				std::cout << "Select target player: ";
+				if(validCard) action(6);
 			}
 			else if(input.compare("countess") == 0){
 				validCard = checkValid(7);
-				std::cout << "Select target player: ";
+				if(validCard) action(7);
 			}
 			else if(input.compare("princess") == 0){
 				validCard = checkValid(8);
-				std::cout << "Select target player: ";
+				if(validCard) action(8);
 			}
-			else std::cout << "Enter the name of a card in your hand.\n";
 		}
 	}
 
@@ -90,13 +106,49 @@ class Player
 			else hand.pop_back();
 			return true;
 		}
-		else return false;
+		std::cout << "Enter the name of a card in your hand.\n";
+		return false;
 	}
 
 	void action(int card){
 		switch(card){
 			case 1 : {
 				std::cout << "Select target player: ";
+				
+				break;
+			}
+			case 2 : {
+				std::cout << "Select target player: ";
+				
+				break;
+			}
+			case 3 : {
+				std::cout << "Select target player: ";
+				
+				break;
+			}
+			case 4 : {
+				std::cout << "You are protected for 1 turn.\n";
+				isProtected = true;
+				break;
+			}
+			case 5 : {
+				std::cout << "Select target player: ";
+				
+				break;
+			}
+			case 6 : {
+				std::cout << "Select target player: ";
+				
+				break;
+			}
+			case 7 : {
+				std::cout << "You discarded the countess.\n";
+				break;
+			}
+			case 8 : {
+				std::cout << "You discarded the princess. You lose.\n";
+				break;
 			}
 		}
 	}
@@ -115,9 +167,13 @@ class Player
 		printHand(hand.front());
 		printHand(hand.back());
 		std::cout << '\n';
-		std::cout << "Which card will you play?";
 		selectCard();
 	}
+
+	bool getLoser(){
+		return isLoser;
+	}
+	
 
 };
 
@@ -125,7 +181,6 @@ int main() {
 	// Determine if user inputted number of players is valid
 	bool valid = false;
 	std::string input = "";
-	int numPlayers = 0;
 
 	while(!valid){
 		std::cout << "Please enter the number of players (2-4): ";
@@ -156,5 +211,27 @@ int main() {
 	for (int& x: deck) std::cout << ' ' << x;
 	std::cout << '\n';
 
+	// Add players to player list
+	for (int i = 1; i < numPlayers + 1; i++){
+		players.push_back(Player(i));
+	}
+
+	int turn = 0;
+
+	// TODO
+	// Each player has an action, then the next player goes. Continue until
+	// only one player remains or until there are no cards left.
+	while(numPlayers > 1 || pointer < 16){
+		if(!players.at(turn).getLoser()){
+			players.at(turn).turn();
+		}
+	}
+
 	return 0;
 }
+
+
+
+
+
+
